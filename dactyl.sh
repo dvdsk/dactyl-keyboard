@@ -26,6 +26,10 @@ function catch_interrupt() { exit 1; }
 trap catch_interrupt SIGINT
 trap catch_interrupt SIGTSTP
 
+docker() {
+	sudo podman "$@"
+}
+
 #                   *******************                   #
 # *******************    functions    ******************* #
 #                   *******************                   #
@@ -251,15 +255,7 @@ function processArgs() {
 # installing docker is out of scope
 # so if it isn't found, inform user and exit
 function checkDocker() {
-  if ! which docker &> /dev/null; then
-    error "Docker is not installed.\n\n\tPlease visit https://www.docker.com/products/docker-desktop for more information."
-    exit 1
-  fi
-
-  if ! docker image list &> /dev/null; then
-    error "Docker is not running. Please start docker and try again."
-    exit 1;
-  fi
+	echo "skipped"
 }
 
 # exit unless user responds with yes
@@ -284,7 +280,7 @@ function imageExists() {
 
 function buildImage() {
   inform "Building docker image: $imageName..."
-  docker build -t dactyl-keyboard -f docker/Dockerfile .
+  docker build --format docker -t dactyl-keyboard -f docker/Dockerfile .
 }
 
 function promptBuildImageIfNotExists() {
